@@ -23,7 +23,8 @@ return [
     /*
     |--------------------------------------------------------------------------
     | Session Lifetime
-    |--------------------------------------------------------------------------
+    |--------------------------------------------------------------------------'driver' => env('SESSION_DRIVER', 'database'),
+
     |
     | Here you may specify the number of minutes that you wish the session
     | to be allowed to remain idle before it expires. If you want them
