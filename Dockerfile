@@ -1,29 +1,51 @@
+# Utiliser l'image PHP officielle avec extensions
 FROM php:8.2-fpm
 
-# Installez les dépendances nécessaires
+# Installer des dépendances
 RUN apt-get update && apt-get install -y \
-    libpq-dev \
-    libzip-dev \
+    build-essential \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    libonig-dev \
+    libxml2-dev \
+    zip \
+    curl \
     unzip \
     git \
-    && docker-php-ext-install pdo_pgsql zip
+    libpq-dev \
+    libzip-dev \
+    && docker-php-ext-install pdo pdo_mysql pdo_pgsql zip gd mbstring exif pcntl bcmath
 
-# Installez Composer
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+# Installer Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Définir le répertoire de travail
 WORKDIR /var/www
 
-# Copiez les fichiers Laravel dans le conteneur
+# Copier les fichiers du projet dans le conteneur
 COPY . .
 
-# Installez les dépendances PHP avec Composer
-RUN composer install --no-scripts --optimize-autoloader
+# Configurer les permissions sur le répertoire de travail
+RUN chown -R www-data:www-data /var/www
 
-# Exposez le port 9000 pour PHP-FPM
-EXPOSE 9001
+# Installer les dépendances du projet
+RUN composer install
 
-# Lancez les migrations
-RUN php artisan migrate
 
-CMD ["php-fpm"]
+# Copier le fichier d'environnement et générer la clé
+COPY .env.example .env
+RUN php artisan key:generate
+
+# Configurer les permissions sur le stockage et le cache
+RUN chown -R www-data:www-data /var/www/storage \
+    && chmod -R 775 /var/www/storage \
+    && chmod -R 775 /var/www/bootstrap/cache
+
+
+
+# Exposer le port
+EXPOSE 9000
+
+# Commande pour démarrer l'application
+CMD php artisan serve --host=0.0.0.0 --port=9000
