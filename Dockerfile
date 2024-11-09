@@ -1,4 +1,3 @@
-# Utilisez une image PHP avec des extensions nécessaires pour Laravel et PostgreSQL
 FROM php:8.2-fpm
 
 # Installez les dépendances nécessaires
@@ -9,7 +8,7 @@ RUN apt-get update && apt-get install -y \
     git \
     && docker-php-ext-install pdo_pgsql zip
 
-# Installe Composer
+# Installez Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 # Définir le répertoire de travail
@@ -19,7 +18,7 @@ WORKDIR /var/www
 COPY . .
 
 # Installez les dépendances PHP avec Composer
-RUN composer install --no-scripts --no-autoloader --optimize-autoloader
+RUN composer install --no-scripts --optimize-autoloader
 
 # Exposez le port 9000 pour PHP-FPM
 EXPOSE 9001
