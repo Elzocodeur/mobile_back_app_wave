@@ -13,7 +13,7 @@ class Kernel extends HttpKernel
 
     protected $middlewareGroups = [
         'api' => [
-            \App\Http\Middleware\HandleCors::class, // Ajoutez ici le middleware CORS
+            \App\Http\Middleware\HandleCors::class, 
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
